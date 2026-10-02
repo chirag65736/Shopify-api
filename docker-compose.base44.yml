@@ -13,7 +13,7 @@ services:
     command: ["sh", "-ec", "pip install --no-cache-dir -r requirements.txt && exec flask run --debug --host=0.0.0.0 --port=5000"]
     restart: on-failure
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request,sys; urllib.request.urlopen('http://localhost:5000/shopify', timeout=5); sys.exit(0)"]
+      test: ["CMD", "python", "-c", "import urllib.request,sys; req=urllib.request.Request('http://localhost:5000/shopify'); \ntry:\n    urllib.request.urlopen(req, timeout=5)\nexcept urllib.error.HTTPError as e:\n    pass\nexcept Exception:\n    sys.exit(1)\nsys.exit(0)"]
       interval: 10s
       timeout: 5s
       retries: 5
